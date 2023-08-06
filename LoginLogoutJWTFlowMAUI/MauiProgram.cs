@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using LoginLogoutJWTFlowMAUI.Pages;
+using LoginLogoutJWTFlowMAUI.Services;
+using Microsoft.Extensions.Logging;
 
 namespace LoginLogoutJWTFlowMAUI;
 
@@ -16,6 +18,14 @@ public static class MauiProgram
 			});
 
 		builder.Services.AddCustomApiHttpClient();
+
+        builder.Services.AddSingleton<IAuthService, AuthService>();
+        builder.Services.AddSingleton<MainPage>();
+        builder.Services.AddTransient<LoginPage>();
+        builder.Services.AddTransient<ApplicationDetailsService>();
+        builder.Services.AddTransient<ApplicationDetailsPage>();
+        builder.Services.AddTransient<UserService>();
+        builder.Services.AddTransient<UsersPage>();
 
 #if DEBUG
 		builder.Logging.AddDebug();
@@ -38,7 +48,7 @@ public static class MauiProgramExtensions
 			return null;
         });
 
-        services.AddHttpClient("maui-to-https-localhost", httpClient =>
+        services.AddHttpClient(AppConstants.HttpClientName, httpClient =>
         {
             var baseAddress =
                     DeviceInfo.Platform == DevicePlatform.Android

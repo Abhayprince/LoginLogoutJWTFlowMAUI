@@ -1,24 +1,28 @@
-﻿namespace LoginLogoutJWTFlowMAUI;
+﻿using LoginLogoutJWTFlowMAUI.Pages;
+using LoginLogoutJWTFlowMAUI.Services;
+
+namespace LoginLogoutJWTFlowMAUI;
 
 public partial class MainPage : ContentPage
 {
-	int count = 0;
-
-	public MainPage()
+    private readonly IAuthService _authService;
+	public MainPage(IAuthService authService)
 	{
 		InitializeComponent();
-	}
+        _authService = authService;
+    }
 
-	private void OnCounterClicked(object sender, EventArgs e)
-	{
-		count++;
-
-		if (count == 1)
-			CounterBtn.Text = $"Clicked {count} time";
-		else
-			CounterBtn.Text = $"Clicked {count} times";
-
-		SemanticScreenReader.Announce(CounterBtn.Text);
-	}
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+        if (await _authService.IsUserAuthenticated())
+        {
+            await Shell.Current.GoToAsync($"//{nameof(ApplicationDetailsPage)}");
+        }
+        else
+        {
+            await Shell.Current.GoToAsync($"//{nameof(LoginPage)}");
+        }
+    }
 }
 
